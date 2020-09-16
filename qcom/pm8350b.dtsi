@@ -21,11 +21,6 @@
 			#thermal-sensor-cells = <0>;
 		};
 
-		pm8350b_pbs2: qcom,pbs@1900 {
-			compatible = "qcom,qpnp-pbs";
-			reg = <0x1900>;
-		};
-
 		pm8350b_gpios: pinctrl@8800 {
 			compatible = "qcom,pm8350b-gpio";
 			reg = <0x8800>;
@@ -256,7 +251,7 @@
 
 		trips {
 			ibat_lvl0:ibat-lvl0 {
-				temperature = <6000>;
+				temperature = <4500>;
 				hysteresis = <200>;
 				type = "passive";
 			};
@@ -271,7 +266,7 @@
 
 		trips {
 			ibat_lvl1:ibat-lvl1 {
-				temperature = <7500>;
+				temperature = <5000>;
 				hysteresis = <200>;
 				type = "passive";
 			};

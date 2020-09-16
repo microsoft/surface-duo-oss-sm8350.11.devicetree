@@ -1,5 +1,3 @@
-#include "sdxlemur-pmic-overlay.dtsi"
-
 &soc {
 	timer {
 		clock-frequency = <96000>;
