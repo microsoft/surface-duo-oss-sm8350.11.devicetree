@@ -23,10 +23,18 @@
 		clocks = <&clock_gcc GCC_GPU_MEMNOC_GFX_CLK>,
 			<&clock_gcc GCC_GPU_SNOC_DVM_GFX_CLK>,
 			<&clock_gpucc GPU_CC_AHB_CLK>,
+			<&clock_gpucc GPU_CC_CX_GMU_CLK>,
+			<&clock_gpucc GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK>,
+			<&clock_gpucc GPU_CC_HUB_AON_CLK>,
+			<&clock_gpucc GPU_CC_HUB_CX_INT_CLK>,
 			<&clock_aop QDSS_CLK>;
 		clock-names = "gcc_gpu_memnoc_gfx",
 				"gcc_gpu_snoc_dvm_gfx",
 				"gpu_cc_ahb",
+				"gpu_cc_cx_gmu",
+				"gpu_cc_hlos1_vote_gpu_smmu",
+				"gpu_cc_hub_aon",
+				"gpu_cc_hub_cx_int",
 				"apb_pclk";
 
 		qcom,chipid = <0x06060000>;
@@ -42,6 +50,8 @@
 		qcom,ubwc-mode = <4>;
 
 		qcom,gpu-qdss-stm = <0x161c0000 0x40000>; /* base addr, size */
+
+		qcom,tzone-names = "gpuss-0-usr", "gpuss-1-usr";
 
 		interconnects = <&gem_noc MASTER_GFX3D &mc_virt SLAVE_EBI1>;
 		interconnect-names = "gpu_icc_path";
@@ -233,7 +243,7 @@
 	gmu: qcom,gmu@3d69000 {
 		compatible = "qcom,gpu-gmu";
 
-		reg = <0x3d6a000 0x30000>,
+		reg = <0x3d6a000 0x34000>,
 			<0xb290000 0x10000>;
 
 		reg-names = "kgsl_gmu_reg",
@@ -244,6 +254,9 @@
 		interrupt-names = "kgsl_hfi_irq", "kgsl_gmu_irq";
 
 		regulator-names = "vddcx", "vdd";
+
+		iommus = <&kgsl_smmu 0x5 0x400>;
+		qcom,iommu-dma = "disabled";
 
 		vddcx-supply = <&gpu_cc_cx_gdsc>;
 		vdd-supply = <&gpu_cc_gx_gdsc>;
@@ -260,18 +273,5 @@
 
 		mboxes = <&qmp_aop 0>;
 		mbox-names = "aop";
-
-		gmu_user: gmu_user {
-			compatible = "qcom,smmu-gmu-user-cb";
-			iommus = <&kgsl_smmu 0x4 0x400>;
-			qcom,iommu-dma = "disabled";
-		};
-
-		gmu_kernel: gmu_kernel {
-			compatible = "qcom,smmu-gmu-kernel-cb";
-			iommus = <&kgsl_smmu 0x5 0x400>;
-			qcom,iommu-dma = "disabled";
-		};
-
 	};
 };

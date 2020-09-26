@@ -494,7 +494,7 @@
 			compatible = "shared-dma-pool";
 			alloc-ranges = <0x0 0x00000000 0x0 0xffffffff>;
 			reusable;
-			size = <0 0x2c00000>;
+			size = <0 0x3000000>;
 		};
 
 		sp_mem: sp_region {  /* SPSS-HLOS ION shared mem */
@@ -521,6 +521,19 @@
 		dfps_data_memory: dfps_data_region {
 			reg = <0x0 0xe3300000 0x0 0x0100000>;
 			label = "dfps_data_region";
+		};
+
+		memshare_mem: memshare_region {
+			compatible = "shared-dma-pool";
+			no-map;
+			/*
+			 * Memory shared with modem needs to be outside of
+			 * the CLADE address space, which begins at
+			 * 0xE0000000 and spans 512 MB.
+			 */
+			alloc-ranges = <0x0 0x00000000 0x0 0xdfffffff>;
+			alignment = <0x0 0x100000>;
+			size = <0x0 0x800000>;
 		};
 
 		non_secure_display_memory: non_secure_display_region {
@@ -2184,7 +2197,6 @@
 		reg = <0x7040000 0x1000>;
 		reg-names = "etm-base";
 
-		status = "disabled";
 		clocks = <&clock_aop QDSS_CLK>;
 		clock-names = "core_clk";
 
@@ -2196,7 +2208,6 @@
 		reg = <0x7140000 0x1000>;
 		reg-names = "etm-base";
 
-		status = "disabled";
 		clocks = <&clock_aop QDSS_CLK>;
 		clock-names = "core_clk";
 
@@ -2208,7 +2219,6 @@
 		reg = <0x7240000 0x1000>;
 		reg-names = "etm-base";
 
-		status = "disabled";
 		clocks = <&clock_aop QDSS_CLK>;
 		clock-names = "core_clk";
 
@@ -2220,7 +2230,6 @@
 		reg = <0x7340000 0x1000>;
 		reg-names = "etm-base";
 
-		status = "disabled";
 		clocks = <&clock_aop QDSS_CLK>;
 		clock-names = "core_clk";
 
@@ -2232,7 +2241,6 @@
 		reg = <0x7440000 0x1000>;
 		reg-names = "etm-base";
 
-		status = "disabled";
 		clocks = <&clock_aop QDSS_CLK>;
 		clock-names = "core_clk";
 
@@ -2244,7 +2252,6 @@
 		reg = <0x7540000 0x1000>;
 		reg-names = "etm-base";
 
-		status = "disabled";
 		clocks = <&clock_aop QDSS_CLK>;
 		clock-names = "core_clk";
 
@@ -2256,7 +2263,6 @@
 		reg = <0x7640000 0x1000>;
 		reg-names = "etm-base";
 
-		status = "disabled";
 		clocks = <&clock_aop QDSS_CLK>;
 		clock-names = "core_clk";
 
@@ -2268,7 +2274,6 @@
 		reg = <0x7740000 0x1000>;
 		reg-names = "etm-base";
 
-		status = "disabled";
 		clocks = <&clock_aop QDSS_CLK>;
 		clock-names = "core_clk";
 
@@ -2296,6 +2301,7 @@
 		qcom,client_3 {
 			compatible = "qcom,memshare-peripheral";
 			qcom,peripheral-size = <0x500000>;
+			memory-region = <&memshare_mem>;
 			qcom,client-id = <1>;
 			qcom,allocate-on-request;
 			label = "modem";
@@ -2340,8 +2346,9 @@
 		reg-name = "cc_base";
 		vdd_mm-supply = <&VDD_MM_LEVEL>;
 		vdd_mx-supply = <&VDD_MXA_LEVEL>;
-		clock-names = "cfg_ahb_clk";
+		interconnects = <&gem_noc MASTER_APPSS_PROC &config_noc SLAVE_VENUS_CFG>;
 		clocks = <&clock_gcc GCC_VIDEO_AHB_CLK>;
+		clock-names = "iface";
 		#clock-cells = <1>;
 		#reset-cells = <1>;
 	};
@@ -2352,8 +2359,9 @@
 		reg-names = "cc_base";
 		vdd_mm-supply = <&VDD_MM_LEVEL>;
 		vdd_mx-supply = <&VDD_MXA_LEVEL>;
-		clock-names = "cfg_ahb_clk";
+		interconnects = <&gem_noc MASTER_APPSS_PROC &config_noc SLAVE_CAMERA_CFG>;
 		clocks = <&clock_gcc GCC_CAMERA_AHB_CLK>;
+		clock-names = "iface";
 		#clock-cells = <1>;
 		#reset-cells = <1>;
 	};
@@ -2363,8 +2371,9 @@
 		reg = <0xaf00000 0x20000>;
 		reg-name = "cc_base";
 		vdd_mm-supply = <&VDD_MM_LEVEL>;
-		clock-names = "cfg_ahb_clk";
+		interconnects = <&gem_noc MASTER_APPSS_PROC &config_noc SLAVE_DISPLAY_CFG>;
 		clocks = <&clock_gcc GCC_DISP_AHB_CLK>;
+		clock-names = "iface";
 		#clock-cells = <1>;
 		#reset-cells = <1>;
 	};
@@ -2743,6 +2752,7 @@
 
 	qcom-secure-buffer {
 		compatible = "qcom,secure-buffer";
+		qcom,vmid-cp-camera-preview-ro;
 	};
 
 	qcom-mem-buf {
@@ -2774,7 +2784,7 @@
 		qcom,tcs-config = <ACTIVE_TCS  2>,
 				  <SLEEP_TCS   3>,
 				  <WAKE_TCS    3>,
-				  <CONTROL_TCS 1>;
+				  <CONTROL_TCS 0>;
 
 		apps_bcm_voter: bcm_voter {
 			compatible = "qcom,bcm-voter";
@@ -3229,11 +3239,12 @@
 		};
 	};
 
-	kryo-erp {
+	kryo_erp: erp {
 		compatible = "arm,arm64-kryo-cpu-erp";
 		interrupts = <GIC_PPI 0 IRQ_TYPE_LEVEL_HIGH>,
 			<GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
 		interrupt-names = "l1-l2-faultirq","l3-scu-faultirq";
+		qcom,disable-panic-on-ce;
 	};
 
 	tcsr_mutex_block: syscon@1f40000 {
@@ -3871,6 +3882,13 @@
 		mboxes = <&qmp_aop 0>;
 	};
 
+	cpu7_cpu_ddr_qoslatfloor: qcom,cpu7-cpu-ddr-qoslatfloor {
+		compatible = "qcom,devfreq-qoslat";
+		governor = "mem_latency";
+		operating-points-v2 = <&qoslat_opp_table>;
+		mboxes = <&qmp_aop 0>;
+	};
+
 	cpu0_cpu_l3_tbl: qcom,cpu0-cpu-l3-tbl {
 		qcom,core-dev-table =
 			<  300000  300000000 >,
@@ -4008,9 +4026,10 @@
 
 		cpu7_l3_computemon: qcom,cpu7-l3-computemon {
 			compatible = "qcom,arm-compute-mon";
+			qcom,cpulist = <&CPU7>;
 			qcom,target-dev = <&cpu7_cpu_l3_latfloor>;
 			qcom,core-dev-table =
-				< 2304000  300000000 >,
+				< 1996800  300000000 >,
 				< 2400000 1516800000 >;
 		};
 
@@ -4118,18 +4137,23 @@
 				<  300000 1 >,
 				< 3000000 2 >;
 		};
+
+		cpu7_qoslatmon: qcom,cpu7-qoslatmon {
+			compatible = "qcom,arm-memlat-mon";
+			qcom,cpulist = <&CPU7>;
+			qcom,target-dev = <&cpu7_cpu_ddr_qoslatfloor>;
+			qcom,cachemiss-ev = <0x1000>;
+			qcom,core-dev-table =
+				< 1996800 1 >,
+				< 2400000 2 >;
+		};
 	};
 
 	wdog: qcom,wdt@17c10000{
 		compatible = "qcom,msm-watchdog";
 		reg = <0x17c10000 0x1000>;
 		reg-names = "wdt-base";
-		interrupts = <0 0 IRQ_TYPE_LEVEL_HIGH>,
-		                <0 1 IRQ_TYPE_LEVEL_HIGH>;
-		qcom,bark-time = <11000>;
-		qcom,pet-time = <9360>;
-		qcom,ipi-ping;
-		qcom,wakeup-enable;
+		interrupts = <0 0 IRQ_TYPE_LEVEL_HIGH>;
 	};
 
 	tsens0:tsens@c222000 {
@@ -5026,6 +5050,26 @@
 			qcom,dump-size = <0x1000>;
 			qcom,dump-id = <0x104>;
 		};
+
+		LLCC_1: llcc_1_dcache {
+			qcom,dump-size = <0x1141c0>;
+			qcom,dump-id = <0x140>;
+		};
+
+		LLCC_2: llcc_2_dcache {
+			qcom,dump-size = <0x1141c0>;
+			qcom,dump-id = <0x141>;
+		};
+
+		LLCC_3: llcc_3_dcache {
+			qcom,dump-size = <0x1141c0>;
+			qcom,dump-id = <0x142>;
+		};
+
+		LLCC_4: llcc_4_dcache {
+			qcom,dump-size = <0x1141c0>;
+			qcom,dump-id = <0x143>;
+		};
 	};
 
 	qcom,ssc@5c00000 {
@@ -5186,6 +5230,7 @@
 		qcom,spss-test-firmware-name = "spss1t";  /* 8 chars max */
 		qcom,spss-prod-firmware-name = "spss1p";  /* 8 chars max */
 		qcom,spss-debug-reg-addr = <0x01886020>;
+		qcom,spss-scsr-regs-addr = <0x01880000>;  /* SPU shared register */
 		qcom,spss-emul-type-reg-addr = <0x01fc8004>;
 		pil-mem = <&pil_spss_mem>;
 		qcom,pil-size = <0x0F0000>; // padding to 960 KB
@@ -5300,6 +5345,7 @@
 		qcom,wlan-cbc-enabled;
 		/* RPMH_PDC_WLAN_RF_TCS<6>_CMD<2> offset */
 		qcom,tcs_offset_int_pow_amp_vreg = <0x4D0>;
+		use-pm-domain;
 
 		vdd-wlan-aon-supply = <&S2E>;
 		qcom,vdd-wlan-aon-config = <950000 952000 0 0 1>;
@@ -5314,22 +5360,38 @@
 		wlan-ant-switch-supply = <&L7E>;
 		qcom,wlan-ant-switch-config = <2800000 2800000 0 0 0>;
 
-		interconnects = <&aggre2_noc MASTER_PCIE_0 &mc_virt SLAVE_EBI1>;
-		qcom,bus-bw-cfg-num = <7>;
+		interconnects =
+		<&aggre2_noc MASTER_PCIE_0 &aggre2_noc SLAVE_ANOC_PCIE_GEM_NOC>,
+		<&gem_noc MASTER_ANOC_PCIE_GEM_NOC &mc_virt SLAVE_EBI1>;
+		interconnect-names = "pcie_to_memnoc", "memnoc_to_ddr";
+
+		qcom,icc-path-count = <2>;
+		qcom,bus-bw-cfg-count = <7>;
 		qcom,bus-bw-cfg =
-		/* no vote */
+		/** ICC Path 1 **/
+		<0 0>, /* no vote */
+		/* idle: 0-18 Mbps snoc/anoc: 100 Mhz ddr: 451.2 MHz */
+		<2250 390000>,
+		/* low: 18-60 Mbps snoc/anoc: 100 Mhz ddr: 451.2 MHz */
+		<7500 390000>,
+		/* medium: 60-240 Mbps snoc/anoc: 200 Mhz ddr: 451.2 MHz */
+		<30000 790000>,
+		/* high: 240-1080 Mbps snoc/anoc: 200 Mhz ddr: 451.2 MHz */
+		<100000 790000>,
+		/* very high: > 1080 Mbps snoc/anoc: 403 Mhz ddr: 451.2 MHz */
+		<175000 1600000>,
+		/* low (latency critical): 18-60 Mbps snoc/anoc: 200 Mhz
+		 * ddr: 547.2 MHz
+		 */
+		<7500 390000>,
+
+		/** ICC Path 2 **/
 		<0 0>,
-		/* idle: 0-18 Mbps ddr freq: 451.2 MHz */
-		<2250 1600000>,
-		/* low: 18-60 Mbps ddr freq: 451.2 MHz */
-		<7500 1600000>,
-		/* medium: 60-240 Mbps ddr freq: 451.2 MHz */
+		<2250 1804800>,
+		<7500 1804800>,
 		<30000 1804800>,
-		/* high: 240 - 1080 Mbps ddr freq: 451.2 MHz */
 		<100000 1804800>,
-		/* high: 1080 - 1400 Mbps ddr freq: 451.2 MHz */
-		<175000 1804800>,
-		/* low (latency critical): 18 - 60 Mbps, ddr freq: 547.2 MHz */
+		<175000 6220800>,
 		<7500 2188800>;
 
 		mhi,max-channels = <30>;
@@ -5416,7 +5478,7 @@
 				mhi,num-elements = <32>;
 				mhi,intmod = <0>;
 				mhi,msi = <1>;
-				mhi,priority = <1>;
+				mhi,priority = <0>;
 				mhi,brstmode = <2>;
 				mhi,data-type = <1>;
 			};

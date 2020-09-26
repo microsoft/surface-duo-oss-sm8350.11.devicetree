@@ -6,6 +6,7 @@
 / {
 	#address-cells = <0x2>;
 	#size-cells = <0x2>;
+	qcom,msm-id = <415 0x10000>;
 	interrupt-parent = <&vgic>;
 
 	qcom-mem-buf {
@@ -29,7 +30,8 @@
 			reg = <0x0 0x0>;
 			device_type = "cpu";
 			enable-method = "psci";
-			cpu-idle-states = <0x2>;
+			cpu-idle-states = <&CPU_PWR_DWN
+					   &CLUSTER_PWR_DWN>;
 		};
 
 		CPU1: cpu@100 {
@@ -37,9 +39,31 @@
 			reg = <0x0 0x100>;
 			device_type = "cpu";
 			enable-method = "psci";
-			cpu-idle-states = <0x2>;
+			cpu-idle-states = <&CPU_PWR_DWN
+					   &CLUSTER_PWR_DWN>;
+		};
+	};
+
+	idle-states {
+		CPU_PWR_DWN: c4 {  /* Using Gold C4 latencies */
+			compatible = "arm,idle-state";
+			idle-state-name = "rail-pc";
+			entry-latency-us = <702>;
+			exit-latency-us = <1061>;
+			min-residency-us = <4488>;
+			arm,psci-suspend-param = <0x40000004>;
+			local-timer-stop;
 		};
 
+		CLUSTER_PWR_DWN: d4 { /* C4+D4 */
+			compatible = "arm,idle-state";
+			idle-state-name = "l3-pc";
+			entry-latency-us = <2752>;
+			exit-latency-us = <3048>;
+			min-residency-us = <6118>;
+			arm,psci-suspend-param = <0x40000044>;
+			local-timer-stop;
+		};
 	};
 
 	neuron-client-block {
@@ -94,7 +118,6 @@
 		iomemory-ranges = <0x0 0x92c000 0x0 0x92c000 0x0 0x4000 0x0
 				0x0 0xc400000 0x0 0xc400000 0x0 0x30000 0x1
 				0x0 0xc440000 0x0 0xc440000 0x0 0x10000 0x1
-				0x0 0xc600000 0x0 0xc600000 0x0 0x2000000 0x1
 				0x0 0xe600000 0x0 0xe600000 0x0 0x100000 0x1
 				0x0 0xe700000 0x0 0xe700000 0x0 0xa0000 0x1
 				0x0 0xae8f000 0x0 0xae8f000 0x0 0x1000 0x0>;
@@ -116,7 +139,7 @@
 			config = "/cpus";
 			affinity = "static";
 			affinity-map = <0x4 0x5>;
-			sched-priority = < (-1) >;  /* relative to PVM */
+			sched-priority = <0>;       /* relative to PVM */
 			sched-timeslice = <2000>;   /* in ms */
 		};
 
@@ -279,19 +302,6 @@
 		qcom,wrapper-core = <&qupv3_0>;
 		qcom,le-vm;
 		status = "ok";
-		st_fts@49 {
-			compatible = "st,fts";
-			reg = <0x49>;
-			st,x-flip = <1>;
-			st,y-flip = <1>;
-			st,regulator_dvdd = "vdd";
-			st,regulator_avdd = "avdd";
-			st,trusted-touch-mode = "vm_mode";
-			st,touch-environment = "tvm";
-			st,trusted-touch-spi-irq = <566>;
-			st,trusted-touch-io-bases = <0xF114000 0xF115000 0xF116000 0xF117000 0x990000 0x00910000>;
-			st,trusted-touch-io-sizes = <0x1000 0x1000 0x1000 0x1000 0x4000 0x4000>;
-		};
 	};
 
 	qupv3_se4_spi: spi@990000 {
@@ -308,10 +318,21 @@
 		qcom,le-vm;
 		status = "disabled";
 	};
+
+	qcom_smcinvoke {
+		compatible = "qcom,smcinvoke";
+	};
+
+	qtee_shmbridge {
+		compatible = "qcom,tee-shared-memory-bridge";
+		qcom,support-hypervisor;
+	};
 };
 
-#include "trustedvm-ion.dtsi"
+#include "lahaina-vm-ion.dtsi"
 #include "display/trustedvm-lahaina-sde.dtsi"
 #include "display/trustedvm-lahaina-sde-display.dtsi"
 #include "display/dsi-panel-sw43404-amoled-dsc-wqhd-cmd.dtsi"
 #include "display/dsi-panel-sw43404-amoled-dsc-wqhd-video.dtsi"
+#include "display/dsi-panel-r66451-dsc-fhd-plus-cmd.dtsi"
+#include "display/dsi-panel-r66451-dsc-fhd-plus-video.dtsi"
