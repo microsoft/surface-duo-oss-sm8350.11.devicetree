@@ -864,6 +864,30 @@
 		status = "disabled";
 	};
 
+	/* MSCHANGE_START HS UART Instance */
+	qupv3_se13_4uart: qcom,qup_uart@a94000 {
+		compatible = "qcom,msm-geni-serial-hs";
+		reg = <0xa94000 0x4000>;
+		reg-names = "se_phys";
+		clock-names = "se-clk", "m-ahb", "s-ahb";
+		clocks = <&clock_gcc GCC_QUPV3_WRAP1_S5_CLK>,
+			<&clock_gcc GCC_QUPV3_WRAP_1_M_AHB_CLK>,
+			<&clock_gcc GCC_QUPV3_WRAP_1_S_AHB_CLK>;
+		pinctrl-names = "default", "active", "sleep";
+		pinctrl-0 = <&qupv3_se13_default_cts>,
+			<&qupv3_se13_default_rtsrx>, <&qupv3_se13_default_tx>;
+		pinctrl-1 = <&qupv3_se13_ctsrx>, <&qupv3_se13_rts>,
+							<&qupv3_se13_tx>;
+		pinctrl-2 = <&qupv3_se13_ctsrx>, <&qupv3_se13_rts>,
+							<&qupv3_se13_tx>;
+		interrupts-extended = <&intc GIC_SPI 358 IRQ_TYPE_LEVEL_HIGH>,
+                <&tlmm 2 IRQ_TYPE_LEVEL_HIGH>;
+		qcom,wrapper-core = <&qupv3_1>;
+		qcom,wakeup-byte = <0xFD>;
+		status = "disabled";
+	};
+	/* MSCHANGE_END HS UART Instance */
+
 	/* SPI */
 	qupv3_se14_spi: spi@880000 {
 		compatible = "qcom,spi-geni";
@@ -1052,6 +1076,27 @@
 		pinctrl-names = "default", "sleep";
 		pinctrl-0 = <&qupv3_se17_i2c_active>;
 		pinctrl-1 = <&qupv3_se17_i2c_sleep>;
+		qcom,wrapper-core = <&qupv3_2>;
+		status = "disabled";
+	};
+
+	// MSCHANGE: qupv3_se18 is used as I2C adaptor to connect camera pmics
+	qupv3_se18_i2c: i2c@890000 {
+		compatible = "qcom,i2c-geni";
+		reg = <0x890000 0x4000>;
+		interrupts = <GIC_SPI 586 IRQ_TYPE_LEVEL_HIGH>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		clock-names = "se-clk", "m-ahb", "s-ahb";
+		clocks = <&clock_gcc GCC_QUPV3_WRAP2_S4_CLK>,
+			<&clock_gcc GCC_QUPV3_WRAP_2_M_AHB_CLK>,
+			<&clock_gcc GCC_QUPV3_WRAP_2_S_AHB_CLK>;
+		dmas = <&gpi_dma2 0 4 3 64 0>,
+			<&gpi_dma2 1 4 3 64 0>;
+		dma-names = "tx", "rx";
+		pinctrl-names = "default", "sleep";
+		pinctrl-0 = <&qupv3_se18_i2c_active>;
+		pinctrl-1 = <&qupv3_se18_i2c_sleep>;
 		qcom,wrapper-core = <&qupv3_2>;
 		status = "disabled";
 	};

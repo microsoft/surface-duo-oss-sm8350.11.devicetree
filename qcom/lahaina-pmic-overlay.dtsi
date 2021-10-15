@@ -53,7 +53,8 @@
 	};
 };
 
-&qupv3_se13_i2c {
+// MSCHANGE: qupv3_se18 is used as I2C adaptor to connect camera pmics
+&qupv3_se18_i2c {
 	#address-cells = <1>;
 	#size-cells = <0>;
 	status = "ok";
@@ -103,8 +104,8 @@
 			L1I: pm8008i_l1: regulator@4000 {
 				reg = <0x4000>;
 				regulator-name = "pm8008i_l1";
-				regulator-min-microvolt = <1000000>;
-				regulator-max-microvolt = <1104000>;
+				regulator-min-microvolt = <1048000>; // MSCHANGE
+				regulator-max-microvolt = <1048000>; // MSCHANGE
 				qcom,min-dropout-voltage = <224000>;
 				qcom,hpm-min-load = <30000>;
 			};
@@ -112,8 +113,8 @@
 			L2I: pm8008i_l2: regulator@4100 {
 				reg = <0x4100>;
 				regulator-name = "pm8008i_l2";
-				regulator-min-microvolt = <944000>;
-				regulator-max-microvolt = <1152000>;
+				regulator-min-microvolt = <1048000>; // MSCHANGE
+				regulator-max-microvolt = <1048000>; // MSCHANGE
 				qcom,min-dropout-voltage = <150000>;
 				qcom,hpm-min-load = <30000>;
 			};
@@ -205,8 +206,8 @@
 			L1J: pm8008j_l1: regulator@4000 {
 				reg = <0x4000>;
 				regulator-name = "pm8008j_l1";
-				regulator-min-microvolt = <944000>;
-				regulator-max-microvolt = <1152000>;
+				regulator-min-microvolt = <1104000>; // MSCHANGE
+				regulator-max-microvolt = <1104000>; // MSCHANGE
 				qcom,min-dropout-voltage = <100000>;
 				qcom,hpm-min-load = <30000>;
 			};
@@ -214,8 +215,8 @@
 			L2J: pm8008j_l2: regulator@4100 {
 				reg = <0x4100>;
 				regulator-name = "pm8008j_l2";
-				regulator-min-microvolt = <944000>;
-				regulator-max-microvolt = <1056000>;
+				regulator-min-microvolt = <1048000>; // MSCHANGE
+				regulator-max-microvolt = <1048000>; // MSCHANGE
 				qcom,min-dropout-voltage = <225000>;
 				qcom,hpm-min-load = <30000>;
 			};
@@ -273,6 +274,7 @@
 };
 
 &pmk8350_vadc {
+/*	//MSCHANGE not using qcom defined vadc nodes
 	pinctrl-names = "default";
 	pinctrl-0 = <&pm8350_rear_tof_therm_default>;
 
@@ -349,7 +351,7 @@
 		label = "pm8350b_ichg_fb";
 		qcom,pre-scaling = <1000 305185>;
 	};
-
+*/
 	smb139x_1_smb_temp {
 		reg = <SMB139x_1_ADC7_SMB_TEMP>;
 		label = "smb139x_1_smb_temp";
@@ -367,13 +369,13 @@
 		label = "smb139x_1_iin_smb";
 		qcom,pre-scaling = <32 100>;
 	};
-
+/* // Removed smb 2 iio nodes
 	smb139x_2_smb_temp {
 		reg = <SMB139x_2_ADC7_SMB_TEMP>;
 		label = "smb139x_2_smb_temp";
 		qcom,pre-scaling = <1 1>;
 	};
-
+*/
 	smb139x_2_ichg_smb {
 		reg = <SMB139x_2_ADC7_ICHG_SMB>;
 		label = "smb139x_2_ichg_smb";
@@ -421,7 +423,8 @@
 	io-channels = <&pmk8350_vadc PMR735B_ADC7_DIE_TEMP>;
 	io-channel-names = "thermal";
 };
-
+//MSCHANGE not using qcom defined adc tm and thermal_zones
+/*
 &pmk8350_adc_tm {
 	io-channels = <&pmk8350_vadc PM8350_ADC7_AMUX_THM1_100K_PU>,
 			<&pmk8350_vadc PM8350_ADC7_AMUX_THM2_100K_PU>,
@@ -613,8 +616,12 @@
 			};
 		};
 	};
+};
+*/
+//MSCHANGE end
 
-	xo-therm-step {
+&thermal_zones {
+    xo-therm-step {
 		polling-delay-passive = <0>;
 		polling-delay = <0>;
 		thermal-governor = "step_wise";
