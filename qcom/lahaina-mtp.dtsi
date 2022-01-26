@@ -248,4 +248,5 @@
 	};
 };
 
-#include "camera/lahaina-camera-sensor-mtp.dtsi"
+//MS_CHANGE
+//#include "camera/lahaina-camera-sensor-mtp.dtsi"
