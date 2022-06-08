@@ -390,6 +390,7 @@
 		interconnects = <&aggre1_noc MASTER_USB3_1 &mc_virt SLAVE_EBI1>,
 				<&aggre1_noc MASTER_USB3_1 &config_noc SLAVE_IPA_CFG>,
 				<&gem_noc MASTER_APPSS_PROC &config_noc SLAVE_USB3_1>;
+		status = "disabled"; /* MSCHANGE to disable USB secondary controller on mobile platforms */
 
 		dwc3@a800000 {
 			compatible = "snps,dwc3";
@@ -427,6 +428,7 @@
 
 		resets = <&clock_gcc GCC_QUSB2PHY_SEC_BCR>;
 		reset-names = "phy_reset";
+		status = "disabled"; /* MSCHANGE to disable USB secondary controller on mobile platforms */
 	};
 
 	usb_nop_phy: usb_nop_phy {
@@ -563,6 +565,7 @@
 				USB3_UNI_PCS_EQ_CONFIG5 0x10 0
 				USB3_UNI_PCS_REFGEN_REQ_CONFIG1 0x21 0
 				0xffffffff 0xffffffff 0x00>;
+		status = "disabled"; /* MSCHANGE to disable USB secondary controller on mobile platforms */
 	};
 
 	usb_audio_qmi_dev {

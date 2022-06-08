@@ -8,7 +8,7 @@
 	interrupt-controller;
 	#interrupt-cells = <4>;
 
-	qcom,pm8350b@3 {
+	pm8350_ms_debug: qcom,pm8350b@3 {
 		compatible = "qcom,spmi-pmic";
 		reg = <3 SPMI_USID>;
 		#address-cells = <1>;
@@ -61,7 +61,7 @@
 			qcom,vmax-mv = <3600>;
 			qcom,brake-mode = <BRAKE_CLOSE_LOOP>;
 			qcom,brake-pattern = /bits/ 8 <0xff 0x3f 0x1f>;
-			qcom,lra-period-us = <6667>;
+			qcom,lra-period-us = <6135>;
 			qcom,drv-sig-shape = <WF_SINE>;
 			qcom,brake-sig-shape = <WF_SINE>;
 			status = "disabled";
@@ -74,103 +74,102 @@
 				/* CLICK */
 				qcom,effect-id = <0>;
 				qcom,wf-vmax-mv = <3600>;
-				qcom,wf-pattern-data =  <0x01f  S_PERIOD_T_LRA  0>,
-							<0x03f  S_PERIOD_T_LRA  0>,
-							<0x05f  S_PERIOD_T_LRA  0>,
-							<0x07f  S_PERIOD_T_LRA  0>,
-							<0x17f  S_PERIOD_T_LRA  0>,
-							<0x15f  S_PERIOD_T_LRA  0>,
-							<0x13f  S_PERIOD_T_LRA  0>,
-							<0x11f  S_PERIOD_T_LRA  0>;
-				qcom,wf-pattern-period-us = <6667>;
-				qcom,wf-brake-pattern = /bits/ 8 <0x0 0x0 0x0>;
-				qcom,wf-pattern-preload;
-				qcom,wf-auto-res-disable;
+				qcom,wf-pattern-data =  <0x0ff  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>;
+				qcom,wf-pattern-period-us = <6135>;
+				qcom,wf-brake-pattern = /bits/ 8 <0xff 0x80 0x0>;
+				qcom,wf-brake-sine-gain = <2>;
+				qcom,wf-brake-mode = <BRAKE_CLOSE_LOOP>;
 			};
 
 			effect_1 {
 				/* DOUBLE_CLICK */
 				qcom,effect-id = <1>;
 				qcom,wf-vmax-mv = <3600>;
-				qcom,wf-pattern-data =  <0x01f  S_PERIOD_T_LRA  0>,
-							<0x03f  S_PERIOD_T_LRA  0>,
-							<0x05f  S_PERIOD_T_LRA  0>,
-							<0x07f  S_PERIOD_T_LRA  0>,
-							<0x17f  S_PERIOD_T_LRA  0>,
-							<0x15f  S_PERIOD_T_LRA  0>,
-							<0x13f  S_PERIOD_T_LRA  0>,
-							<0x11f  S_PERIOD_T_LRA  0>;
-				qcom,wf-pattern-period-us = <6667>;
-				qcom,wf-brake-pattern = /bits/ 8 <0x0 0x0 0x0>;
-				qcom,wf-auto-res-disable;
+				qcom,wf-fifo-data = /bits/ 8 <0x7f 0x7f 0x80 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x7f 0x7f 0x7f>;
+				qcom,wf-fifo-period = <S_PERIOD_T_LRA_DIV_2>;
+				qcom,wf-pattern-period-us = <6135>;
+				qcom,wf-brake-pattern = /bits/ 8 <0xff 0xff 0xff>;
+				qcom,wf-brake-sine-gain = <2>;
+				qcom,wf-brake-mode = <BRAKE_CLOSE_LOOP>;
 			};
 
 			effect_2 {
 				/* TICK */
 				qcom,effect-id = <2>;
 				qcom,wf-vmax-mv = <3600>;
-				qcom,wf-pattern-data =  <0x01f  S_PERIOD_T_LRA  0>,
-							<0x03f  S_PERIOD_T_LRA  0>,
-							<0x05f  S_PERIOD_T_LRA  0>,
-							<0x07f  S_PERIOD_T_LRA  0>,
-							<0x17f  S_PERIOD_T_LRA  0>,
-							<0x15f  S_PERIOD_T_LRA  0>,
-							<0x13f  S_PERIOD_T_LRA  0>,
-							<0x11f  S_PERIOD_T_LRA  0>;
-				qcom,wf-pattern-period-us = <6667>;
-				qcom,wf-brake-pattern = /bits/ 8 <0x0 0x0 0x0>;
-				qcom,wf-auto-res-disable;
+				qcom,wf-pattern-data =  <0x0ff  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>;
+				qcom,wf-pattern-period-us = <6135>;
+				qcom,wf-brake-pattern = /bits/ 8 <0xff 0x80 0x0>;
+				qcom,wf-brake-sine-gain = <2>;
+				qcom,wf-brake-mode = <BRAKE_CLOSE_LOOP>;
 			};
 
 			effect_3 {
 				/* THUD */
 				qcom,effect-id = <3>;
 				qcom,wf-vmax-mv = <3600>;
-				qcom,wf-pattern-data =  <0x01f  S_PERIOD_T_LRA  0>,
-							<0x03f  S_PERIOD_T_LRA  0>,
-							<0x05f  S_PERIOD_T_LRA  0>,
-							<0x07f  S_PERIOD_T_LRA  0>,
-							<0x17f  S_PERIOD_T_LRA  0>,
-							<0x15f  S_PERIOD_T_LRA  0>,
-							<0x13f  S_PERIOD_T_LRA  0>,
-							<0x11f  S_PERIOD_T_LRA  0>;
-				qcom,wf-pattern-period-us = <6667>;
-				qcom,wf-brake-pattern = /bits/ 8 <0x0 0x0 0x0>;
-				qcom,wf-auto-res-disable;
+				qcom,wf-pattern-data =  <0x0ff  S_PERIOD_T_LRA  0>,
+							<0x0ff  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>;
+				qcom,wf-pattern-period-us = <6135>;
+				qcom,wf-brake-pattern = /bits/ 8 <0xff 0xff 0x90>;
+				qcom,wf-brake-sine-gain = <2>;
+				qcom,wf-brake-mode = <BRAKE_CLOSE_LOOP>;
 			};
 
 			effect_4 {
 				/* POP */
 				qcom,effect-id = <4>;
 				qcom,wf-vmax-mv = <3600>;
-				qcom,wf-pattern-data =  <0x01f  S_PERIOD_T_LRA  0>,
-							<0x03f  S_PERIOD_T_LRA  0>,
-							<0x05f  S_PERIOD_T_LRA  0>,
-							<0x07f  S_PERIOD_T_LRA  0>,
-							<0x17f  S_PERIOD_T_LRA  0>,
-							<0x15f  S_PERIOD_T_LRA  0>,
-							<0x13f  S_PERIOD_T_LRA  0>,
-							<0x11f  S_PERIOD_T_LRA  0>;
-				qcom,wf-pattern-period-us = <6667>;
-				qcom,wf-brake-pattern = /bits/ 8 <0x0 0x0 0x0>;
-				qcom,wf-auto-res-disable;
+				qcom,wf-pattern-data =  <0x0ff  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>;
+				qcom,wf-pattern-period-us = <6135>;
+				qcom,wf-brake-pattern = /bits/ 8 <0xff 0x80 0x0>;
+				qcom,wf-brake-sine-gain = <2>;
+				qcom,wf-brake-mode = <BRAKE_CLOSE_LOOP>;
 			};
 
 			effect_5 {
 				/* HEAVY CLICK */
 				qcom,effect-id = <5>;
 				qcom,wf-vmax-mv = <3600>;
-				qcom,wf-pattern-data =  <0x01f  S_PERIOD_T_LRA  0>,
-							<0x03f  S_PERIOD_T_LRA  0>,
-							<0x05f  S_PERIOD_T_LRA  0>,
-							<0x07f  S_PERIOD_T_LRA  0>,
-							<0x17f  S_PERIOD_T_LRA  0>,
-							<0x15f  S_PERIOD_T_LRA  0>,
-							<0x13f  S_PERIOD_T_LRA  0>,
-							<0x11f  S_PERIOD_T_LRA  0>;
-				qcom,wf-pattern-period-us = <6667>;
-				qcom,wf-brake-pattern = /bits/ 8 <0x0 0x0 0x0>;
-				qcom,wf-auto-res-disable;
+				qcom,wf-pattern-data =  <0x0ff  S_PERIOD_T_LRA  0>,
+							<0x050  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>,
+							<0x000  S_PERIOD_T_LRA  0>;
+				qcom,wf-pattern-period-us = <6135>;
+				qcom,wf-brake-pattern = /bits/ 8 <0xff 0x90 0x0>;
+				qcom,wf-brake-sine-gain = <2>;
+				qcom,wf-brake-mode = <BRAKE_CLOSE_LOOP>;
 			};
 		};
 
@@ -256,7 +255,7 @@
 
 		trips {
 			ibat_lvl0:ibat-lvl0 {
-				temperature = <6000>;
+				temperature = <5000>; //MSCHANGE BCL level0 migiation to 5A
 				hysteresis = <200>;
 				type = "passive";
 			};
@@ -271,7 +270,7 @@
 
 		trips {
 			ibat_lvl1:ibat-lvl1 {
-				temperature = <7500>;
+				temperature = <5500>; //MSCHANGE BCL level1 migiation to 5.5A
 				hysteresis = <200>;
 				type = "passive";
 			};
@@ -279,7 +278,7 @@
 	};
 
 	pm8350b-bcl-lvl0 {
-		polling-delay-passive = <500>;
+		polling-delay-passive = <100>;     //MSCHANGE changing passive delay to 1ms. Bug 234474
 		polling-delay = <0>;
 		thermal-governor = "step_wise";
 		thermal-sensors = <&pm8350b_bcl 5>;
@@ -294,7 +293,7 @@
 	};
 
 	pm8350b-bcl-lvl1 {
-		polling-delay-passive = <500>;
+		polling-delay-passive = <100>;  //MSCHANGE changing passive delay to 1ms. Bug 234474
 		polling-delay = <0>;
 		thermal-governor = "step_wise";
 		thermal-sensors = <&pm8350b_bcl 6>;
@@ -309,7 +308,7 @@
 	};
 
 	pm8350b-bcl-lvl2 {
-		polling-delay-passive = <500>;
+		polling-delay-passive = <100>;   //MSCHANGE changing passive delay to 1ms. Bug 234474
 		polling-delay = <0>;
 		thermal-governor = "step_wise";
 		thermal-sensors = <&pm8350b_bcl 7>;
